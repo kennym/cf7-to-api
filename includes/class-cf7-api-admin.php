@@ -575,7 +575,7 @@ endif;
       );
 
       if ( isset($basic_auth) && $basic_auth !== '' ) {
-        args['headers']['Authorization'] = 'Basic ' . base64_encode( $basic_auth );
+        $args['headers']['Authorization'] = 'Basic ' . base64_encode( $basic_auth );
       }
 
       if( $record_type == "xml" ){
