@@ -391,7 +391,7 @@ endif;
 
         do_action( 'qs_cf7_api_before_sent_to_api' , $record );
 
-        $response = $this->send_lead( $record , $qs_cf7_data['debug_log'] , $qs_cf7_data['method'] , $record_type, $qs_cf7_data["base_auth"] );
+        $response = $this->send_lead( $record , $qs_cf7_data['debug_log'] , $qs_cf7_data['method'] , $record_type, $qs_cf7_data["basic_auth"] );
 
         if( is_wp_error( $response ) ){
           $this->log_error( $response , $WPCF7_ContactForm->id() );
