@@ -2,7 +2,7 @@
 Tags: contact form 7 to api,contact form 7,cf7 api,cf7 get,contact form 7 post,contact form7 get,contact form 7 remote, Contact form 7 crm, contact form 7 integration,contact form 7 integrations, contact form 7 rest api,
 Requires at least: 4.7.0
 Tested up to: 4.9.4
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
