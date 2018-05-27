@@ -1,0 +1,21 @@
+.cf7_row {
+    clear: both;
+    margin: 10px 0;
+}
+.cf7_row textarea{
+    width:100%;
+}
+
+.cf7-label-in {
+    min-width: 80px;
+    display: inline-block;
+}
+.xml_mailtag {
+    margin:0 2px;
+}
+.debug-log-wrap{
+    display:none;
+}
+[data-qsindex]{
+    display: none;
+}
