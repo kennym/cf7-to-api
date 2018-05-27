@@ -1,4 +1,4 @@
-=== Contact form 7 TO API ===
+=== Contact form 7 TO API + Basic Auth ===
 Tags: contact form 7 to api,contact form 7,cf7 api,cf7 get,contact form 7 post,contact form7 get,contact form 7 remote, Contact form 7 crm, contact form 7 integration,contact form 7 integrations, contact form 7 rest api,
 Requires at least: 4.7.0
 Tested up to: 4.9.4
@@ -29,9 +29,9 @@ Simply go to your form settings, choose the "Redirect Settings" tab and set your
 Installing Contact form 7 TO API  can be done either by searching for "Contact form 7 TO API" via the "Plugins > Add New" screen in your WordPress dashboard, or by using the following steps:
 
 1. Download the plugin via WordPress.org.
-1. Upload the ZIP file through the "Plugins" > Add New > Upload" screen in your WordPress dashboard.
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Visit the settings screen and configure, as desired.
+2. Upload the ZIP file through the "Plugins" > Add New > Upload" screen in your WordPress dashboard.
+3. Activate the plugin through the 'Plugins' menu in WordPress
+4. Visit the settings screen and configure, as desired.
 
 == Frequently Asked Questions ==
 
@@ -62,6 +62,9 @@ http://my-api-url?const1=some_value&const2=some_value
 3. Debug log view
 
 == Changelog ==
+
+= 1.3.0 =
+* Add Basic Auth option
 
 = 1.2.0 =
 * Added better support for checkbox arrays and radio buttons

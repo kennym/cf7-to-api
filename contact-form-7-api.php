@@ -11,9 +11,9 @@
  * Plugin Name:       Contact form 7 to api
  * Plugin URI:        http://querysol.com/product/contact-form-7-api/
  * Description:       Connect contact forms 7 to remote API using GET or POST.
- * Version:           1.2.0
- * Author:            QUERY SOLUTIONS
- * Author URI: 		  http://www.querysol.com
+ * Version:           1.3.0
+ * Author:            Kenny Meyer
+ * Author URI: 		    https://www.kennymeyer.net
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       qs-cf7-api
