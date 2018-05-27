@@ -8,8 +8,8 @@
  * @package           qs_cf7_api
  *
  * @wordpress-plugin
- * Plugin Name:       Contact form 7 to api
- * Plugin URI:        http://querysol.com/product/contact-form-7-api/
+ * Plugin Name:       Contact form 7 to api + Basic auth
+ * Plugin URI:        https://github.com/kennym/cf7-to-api
  * Description:       Connect contact forms 7 to remote API using GET or POST.
  * Version:           1.3.0
  * Author:            Kenny Meyer

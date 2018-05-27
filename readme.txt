@@ -13,7 +13,8 @@ An addon to transmit contact form 7 entries to remote API using POST or GET.
 Adds an option to send leads to remote API's such as CRM's ERP's and other remote systems using POST/GET.
 NOTE: This plugin requires Contact Form 7 version 4.2 or later.
 
-Supports XML and JSON
+- Supports XML and JSON
+- Supports Basic Auth
 
 == Usage ==
 
