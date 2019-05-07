@@ -15,6 +15,7 @@ NOTE: This plugin requires Contact Form 7 version 4.2 or later.
 
 - Supports XML and JSON
 - Supports Basic Auth
+- Supports Bearer Auth
 
 == Usage ==
 
