@@ -220,7 +220,7 @@ class QS_CF7_api_admin{
               <label for="wpcf7-sf-bearer_auth">
                   <?php _e( 'Bearer auth key' , $this->textdomain );?>
                   <input type="text" id="wpcf7-sf-bearer_auth" name="wpcf7-sf[bearer_auth]" class="large-text" value="<?php echo $wpcf7_api_data["bearer_auth"];?>"
-                   placeholder="e.g. user:secret"/>
+                   placeholder="e.g. a94a8fe5ccb19ba61c4c0873d391e987982fbbd3"/>
               </label>
           </div>
           
