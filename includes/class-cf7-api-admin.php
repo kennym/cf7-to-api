@@ -214,7 +214,7 @@ class QS_CF7_api_admin{
               </label>
           </div>
           
-          <p>- OR -</p>
+          <p><?php _e( '- OR -' , $this->textdomain );?></p>
 
           <div class="cf7_row">
               <label for="wpcf7-sf-bearer_auth">
