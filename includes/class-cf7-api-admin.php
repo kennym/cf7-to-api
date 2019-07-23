@@ -153,6 +153,7 @@ class QS_CF7_api_admin{
 
     $wpcf7_api_data["base_url"]     = isset( $wpcf7_api_data["base_url"] ) ? $wpcf7_api_data["base_url"]         : '';
     $wpcf7_api_data["basic_auth"]   = isset( $wpcf7_api_data["basic_auth"] ) ? $wpcf7_api_data["basic_auth"]   : '';
+    $wpcf7_api_data["bearer_auth"]   = isset( $wpcf7_api_data["bearer_auth"] ) ? $wpcf7_api_data["bearer_auth"]   : '';
     $wpcf7_api_data["send_to_api"]  = isset( $wpcf7_api_data["send_to_api"] ) ? $wpcf7_api_data["send_to_api"]   : '';
     $wpcf7_api_data["input_type"]   = isset( $wpcf7_api_data["input_type"] ) ? $wpcf7_api_data["input_type"]         : 'params';
     $wpcf7_api_data["method"]       = isset( $wpcf7_api_data["method"] ) ? $wpcf7_api_data["method"]             : 'GET';
@@ -212,6 +213,18 @@ class QS_CF7_api_admin{
                    placeholder="e.g. user:secret"/>
               </label>
           </div>
+          
+          <p><?php _e( '- OR -' , $this->textdomain );?></p>
+
+          <div class="cf7_row">
+              <label for="wpcf7-sf-bearer_auth">
+                  <?php _e( 'Bearer auth key' , $this->textdomain );?>
+                  <input type="text" id="wpcf7-sf-bearer_auth" name="wpcf7-sf[bearer_auth]" class="large-text" value="<?php echo $wpcf7_api_data["bearer_auth"];?>"
+                   placeholder="e.g. a94a8fe5ccb19ba61c4c0873d391e987982fbbd3"/>
+              </label>
+          </div>
+          
+          <hr>
 
           <div class="cf7_row">
             <label for="wpcf7-sf-input_type">
@@ -391,7 +404,7 @@ endif;
 
         do_action( 'qs_cf7_api_before_sent_to_api' , $record );
 
-        $response = $this->send_lead( $record , $qs_cf7_data['debug_log'] , $qs_cf7_data['method'] , $record_type, $qs_cf7_data["basic_auth"] );
+        $response = $this->send_lead( $record , $qs_cf7_data['debug_log'] , $qs_cf7_data['method'] , $record_type, $qs_cf7_data["basic_auth"], $qs_cf7_data["bearer_auth"] );
 
         if( is_wp_error( $response ) ){
           $this->log_error( $response , $WPCF7_ContactForm->id() );
@@ -509,7 +522,7 @@ endif;
    * @return [type]          [description]
    */
 
-  private function send_lead( $record , $debug = false , $method = 'GET' , $record_type = 'params', $basic_auth = null ){
+  private function send_lead( $record , $debug = false , $method = 'GET' , $record_type = 'params', $basic_auth = null, $bearer_auth = null ){
     global $wp_version;
 
     $lead = $record["fields"];
@@ -576,6 +589,10 @@ endif;
 
       if ( isset($basic_auth) && $basic_auth !== '' ) {
         $args['headers']['Authorization'] = 'Basic ' . base64_encode( $basic_auth );
+      }
+      
+      if ( isset($bearer_auth) && $bearer_auth !== '' ) {
+        $args['headers']['Authorization'] = 'Basic ' . base64_encode( $bearer_auth );
       }
 
       if( $record_type == "xml" ){
