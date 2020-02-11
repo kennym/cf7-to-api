@@ -75,6 +75,10 @@ For example:
 Changelog
 ---------
 
+### 1.4.2
+
+-   Bug fix
+
 ### 1.4.1
 
 -   Support for WP 5
