@@ -50,7 +50,7 @@ class QS_CF7_atp_integration{
 	 * @since    1.0.0
 	 */
      public function __construct() {
-         $this->plugin_name = 'wc-qs-wishlist';
+         $this->plugin_name = 'wc-cf7-api-form';
          
 
          $this->load_dependencies();
