@@ -592,7 +592,7 @@ endif;
       }
       
       if ( isset($bearer_auth) && $bearer_auth !== '' ) {
-        $args['headers']['Authorization'] = 'Basic ' . base64_encode( $bearer_auth );
+        $args['headers']['Authorization'] = 'Bearer ' . $bearer_auth;
       }
 
       if( $record_type == "xml" ){
