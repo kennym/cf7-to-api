@@ -363,7 +363,15 @@ endif;
     $properties['wpcf7_api_data_map'] = isset( $_POST["qs_wpcf7_api_map"] ) ? $_POST["qs_wpcf7_api_map"] : '';
     $properties['template']           = isset( $_POST["template"] ) ? $_POST["template"] : '';
     $properties['json_template']      = isset( $_POST["json_template"] ) ? $_POST["json_template"] : '';
-
+    
+    //extract custom placeholders    
+    $record_type = isset( $qs_cf7_data['input_type'] ) ? $qs_cf7_data['input_type'] : 'params';
+    if( $record_type == 'json' || $record_type == 'xml' ){
+      $template = $record_type == 'json' ? $properties['json_template'] : $properties['template'];
+      preg_match_all("/\[(\w+(-\d+)?)\]/", $template, $matches, PREG_PATTERN_ORDER); 
+      $properties['wpcf7_api_data_map'] = array_merge(array_fill_keys($matches[1], ''), $properties['wpcf7_api_data_map']);
+    }
+    
     $contact_form->set_properties( $properties );
 
   }
