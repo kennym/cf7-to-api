@@ -11,7 +11,7 @@
  * Plugin Name:       Contact form 7 to api + Basic auth
  * Plugin URI:        https://github.com/kennym/cf7-to-api
  * Description:       Connect contact forms 7 to remote API using GET or POST.
- * Version:           1.4.3
+ * Version:           1.4.4
  * Author:            Kenny Meyer
  * Author URI: 		    https://www.kennymeyer.net
  * License:           GPL-2.0+
