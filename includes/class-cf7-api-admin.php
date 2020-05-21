@@ -493,7 +493,11 @@ endif;
         }else{
           $value = isset($submited_data[$form_key]) ? $submited_data[$form_key] : "";
 
-          //flattan radio
+          // handle line breaks (suggested by Felix Schäfer)
+          $value = preg_replace('/\r|\n/', '\\n', $value);
+          $value = str_replace('\\n\\n', '\n', $value);
+
+          // flatten radio
           if( is_array( $value ) ){
             $value = reset( $value );
           }
