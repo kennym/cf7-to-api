@@ -497,6 +497,9 @@ endif;
           $value = preg_replace('/\r|\n/', '\\n', $value);
           $value = str_replace('\\n\\n', '\n', $value);
 
+          // handle double quotes (suggested by Buğra Ceylan)
+		      $value = str_replace('"', ' ', $value);
+
           // flatten radio
           if( is_array( $value ) ){
             $value = reset( $value );
