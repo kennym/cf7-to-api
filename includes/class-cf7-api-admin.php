@@ -191,7 +191,12 @@ class QS_CF7_api_admin{
           <div class="cf7_row">
 
               <label for="wpcf7-sf-send_to_api">
-                  <input type="checkbox" id="wpcf7-sf-send_to_api" name="wpcf7-sf[send_to_api]" <?php checked( $wpcf7_api_data["send_to_api"] , "on" );?>/>
+                  <input 
+                    type="checkbox" 
+                    id="wpcf7-sf-send_to_api" 
+                    name="wpcf7-sf[send_to_api]" 
+                    <?php checked( $wpcf7_api_data["send_to_api"] , "on" );?>
+                  />
                   <?php _e( 'Send to api ?' , $this->textdomain );?>
               </label>
 
@@ -448,6 +453,13 @@ endif;
   function get_record( $submission , $qs_cf7_data_map , $type = "params", $template = "" ){
 
     $submited_data = $submission->get_posted_data();
+    if ($type == "params") {
+      $files = $submission->uploaded_files();
+      foreach ($files as $key => $value) {
+        $submited_data[$key] = '@"'.$value.'"';
+      }
+    }
+
     $record = array();
 
     if( $type == "params" ){
@@ -562,7 +574,7 @@ endif;
 
         $args['headers']['Content-Type'] = 'application/json';
 
-        $json = $this->parse_json( stripslashes ( $lead ) );
+        $json = $this->parse_json( $lead );
 
         if( is_wp_error( $json ) ){
           return $json;
@@ -623,7 +635,7 @@ endif;
 
         $args['headers']['Content-Type'] = 'application/json';
 
-        $json = $this->parse_json( stripslashes( $lead ) );
+        $json = $this->parse_json( $lead );
 
         if( is_wp_error( $json ) ){
           return $json;
@@ -634,11 +646,13 @@ endif;
       }
 
       $args   = apply_filters( 'qs_cf7_api_get_args' , $args );
-
       $url    = apply_filters( 'qs_cf7_api_post_url' , $url );
 
-      $result = wp_remote_post( $url , $args );
-
+      if ($record_type != 'params') {
+        $result = wp_remote_post( $url , $args );
+      } else {
+        $result = $this->wp_remote_post( $url , $args );
+      }
 
     }
 
@@ -666,6 +680,56 @@ endif;
 
     return new WP_Error( 'json-error' , json_last_error() );
 
+  }
+
+  private function wp_remote_post( $url, $args ) {
+    // Source: https://gist.github.com/sirbrillig/6ab49aa6517d203a6560d75d65e0874a
+    $post_fields = $args['body'];
+    $boundary = wp_generate_password( 24 );
+    $headers  = array(
+      'Content-Type' => 'multipart/form-data; boundary=' . $boundary,
+      'Authorization' => $args['headers']['Authorization']
+    );
+
+    $params = '';
+
+    // First, add the standard POST fields:
+    foreach ( $post_fields as $name => $value ) {
+      if ($value[0] != '@') {
+        $params .= '--' . $boundary;
+        $params .= "\r\n";
+        $params .= 'Content-Disposition: form-data; name="' . $name .
+          '"' . "\r\n\r\n";
+        $params .= $value;
+        $params .= "\r\n";
+      }
+    }
+
+    // Upload the file
+    foreach ( $post_fields as $name => $value ) {
+      if ($value[0] == '@') {
+        $local_file = substr($value, 2, -1);
+        $params .= '--' . $boundary;
+        $params .= "\r\n";
+        $params .= 'Content-Disposition: form-data; name="' . $name .
+          '"; filename="' . basename( $local_file ) . '"' . "\r\n";
+        //        $params .= 'Content-Type: image/jpeg' . "\r\n";
+        $params .= "\r\n";
+        $params .= file_get_contents( $local_file );
+        $params .= "\r\n";
+      }
+    }
+
+    $params .= '--' . $boundary . '--';
+
+    $response = wp_remote_post( $url,
+      array(
+        'headers'    => $headers,
+        'body'       => $params,
+      )
+    );
+
+    return $response;
   }
 
   private function get_xml( $lead ){
