@@ -574,7 +574,7 @@ endif;
 
         $args['headers']['Content-Type'] = 'application/json';
 
-        $json = $this->parse_json( stripslashes($lead) );
+        $json = $this->parse_json( stripslashes( $lead ) );
 
         if( is_wp_error( $json ) ){
           return $json;
@@ -635,7 +635,7 @@ endif;
 
         $args['headers']['Content-Type'] = 'application/json';
 
-        $json = $this->parse_json( stripslashes($lead) );
+        $json = $this->parse_json( stripslashes( $lead ) );
 
         if( is_wp_error( $json ) ){
           return $json;
