@@ -1,6 +1,8 @@
 Contact form 7 TO API + Basic Auth
 ==================================
 
+MAINTAINER NEEDED. Please email me if you're interested.
+
 -   Tags: contact form 7 to api,contact form 7,cf7 api,cf7 get,contact
     form 7 post,contact form7 get,contact form 7 remote, Contact form 7
     crm, contact form 7 integration,contact form 7 integrations, contact
