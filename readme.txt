@@ -76,6 +76,9 @@ For example:
 
 Changelog
 ---------
+### 1.4.7
+
+-   Compatibility fixes
 
 ### 1.4.6
 
