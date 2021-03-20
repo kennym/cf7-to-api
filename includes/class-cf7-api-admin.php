@@ -365,7 +365,7 @@ endif;
     $properties['json_template']      = isset( $_POST["json_template"] ) ? $_POST["json_template"] : '';
     
     //extract custom placeholders    
-    $record_type = isset( $qs_cf7_data['input_type'] ) ? $qs_cf7_data['input_type'] : 'params';
+    $record_type = isset( $properties['wpcf7_api_data']['input_type'] ) ? $properties['wpcf7_api_data']['input_type'] : 'params';
     if( $record_type == 'json' || $record_type == 'xml' ){
       $template = $record_type == 'json' ? $properties['json_template'] : $properties['template'];
       preg_match_all("/\[(\w+(-\d+)?)\]/", $template, $matches, PREG_PATTERN_ORDER); 
