@@ -448,6 +448,7 @@ endif;
   function get_record( $submission , $qs_cf7_data_map , $type = "params", $template = "" ){
 
     $submited_data = $submission->get_posted_data();
+    $uploaded_files = $submission->uploaded_files();
     $record = array();
 
     if( $type == "params" ){
@@ -465,6 +466,12 @@ endif;
             }
           }else{
             $value = isset($submited_data[$form_key]) ? $submited_data[$form_key] : "";
+
+            // handle file input (single file only)
+            if (isset($uploaded_files[$form_key])) {
+              $image_content = file_get_contents($uploaded_files[$form_key][0]);
+              $value = base64_encode($image_content);
+            }
 
             //flattan radio
             if( is_array( $value ) ){
@@ -492,6 +499,12 @@ endif;
           }
         }else{
           $value = isset($submited_data[$form_key]) ? $submited_data[$form_key] : "";
+
+          // handle file input (single file only)
+          if (isset($uploaded_files[$form_key])) {
+            $image_content = file_get_contents($uploaded_files[$form_key][0]);
+            $value = base64_encode($image_content);
+          }
 
           // handle line breaks (suggested by Felix Schäfer)
           $value = preg_replace('/\r|\n/', '\\n', $value);
