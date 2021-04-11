@@ -76,6 +76,10 @@ For example:
 
 Changelog
 ---------
+### 1.4.8
+
+-   Revert handle single quotes
+
 ### 1.4.7
 
 -   Compatibility fixes
