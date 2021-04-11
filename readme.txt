@@ -80,10 +80,6 @@ Changelog
 
 -   Compatibility fixes
 
-### 1.4.6
-
--   Handle single quotes
-
 ### 1.4.5
 
 -   Handle line breaks
