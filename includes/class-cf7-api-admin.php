@@ -467,16 +467,21 @@ endif;
           }else{
             $value = isset($submited_data[$form_key]) ? $submited_data[$form_key] : "";
 
-            // handle file input (single file only)
-            if (isset($uploaded_files[$form_key])) {
-              $image_content = file_get_contents($uploaded_files[$form_key][0]);
-              $value = base64_encode($image_content);
-            }
-
             //flattan radio
             if( is_array( $value ) ){
               $value = reset( $value );
             }
+
+            // handle file input
+            if (isset($uploaded_files[$form_key])) {
+              // Put all files into an array
+              $value = [];
+              foreach ($uploaded_files[$form_key] as $path) {
+                $image_content = file_get_contents($path);
+                $value[] = base64_encode($image_content);
+              }
+            }
+
             $record["fields"][$qs_cf7_form_key] = apply_filters( 'set_record_value' , $value , $qs_cf7_form_key );
           }
 
@@ -500,12 +505,6 @@ endif;
         }else{
           $value = isset($submited_data[$form_key]) ? $submited_data[$form_key] : "";
 
-          // handle file input (single file only)
-          if (isset($uploaded_files[$form_key])) {
-            $image_content = file_get_contents($uploaded_files[$form_key][0]);
-            $value = base64_encode($image_content);
-          }
-
           // handle line breaks (suggested by Felix Schäfer)
           $value = preg_replace('/\r|\n/', '\\n', $value);
           $value = str_replace('\\n\\n', '\n', $value);
@@ -513,6 +512,20 @@ endif;
           // flatten radio
           if( is_array( $value ) ){
             $value = reset( $value );
+          }
+
+          // handle file input
+          if (isset($uploaded_files[$form_key])) {
+            
+            // Put all files into an array 
+            $value = [];
+            foreach ($uploaded_files[$form_key] as $path) {
+              $image_content = file_get_contents($path);
+              $value[] = base64_encode($image_content);
+            }
+            
+            // replace "[$form_key]" with json array of base64 strings
+            $template = preg_replace( "/(\")?\[{$form_key}\](\")?/", json_encode($value), $template );
           }
 
           $template = str_replace( "[{$form_key}]", $value, $template );
