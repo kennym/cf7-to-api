@@ -502,6 +502,11 @@ endif;
             $value = reset( $value );
           }
 
+          // handle boolean acceptance fields
+          if( $this->isAcceptanceField($form_key) ) {
+            $value = $value == "" ? "false" : "true";
+          }
+
           $template = str_replace( "[{$form_key}]", $value, $template );
         }
       }
