@@ -686,4 +686,19 @@ endif;
 
     return $xml;
   }
+
+  /**
+   * @param string $field_name
+   * @return bool
+   */
+  private function isAcceptanceField($field_name) {
+    $field = $this->post->scan_form_tags(
+      array(
+        'type' => 'acceptance',
+        'name' => $field_name
+      )
+    );
+
+    return count($field) == 1;
+  }
 }
