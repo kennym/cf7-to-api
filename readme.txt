@@ -76,6 +76,13 @@ For example:
 
 Changelog
 ---------
+### 1.4.9
+
+-   Update flattening of acceptance fields to json boolean value
+-   Add function to check if a field is an acceptance field
+-   Convert array to csv (@NicoP-S)
+-   support multiple file uploads (@NicoP-S)
+
 ### 1.4.8
 
 -   Revert handle single quotes
