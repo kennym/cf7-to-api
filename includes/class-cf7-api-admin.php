@@ -466,7 +466,7 @@ endif;
           }else{
             $value = isset($submited_data[$form_key]) ? $submited_data[$form_key] : "";
 
-            //flattan radio
+            //flatten radio
             if( is_array( $value ) ){
               $value = reset( $value );
             }
@@ -499,7 +499,10 @@ endif;
 
           // flatten radio
           if( is_array( $value ) ){
-            $value = reset( $value );
+            if(count($value)  == 1)
+              $value = reset( $value );
+            else 
+              $value = implode(";",$value);
           }
 
           $template = str_replace( "[{$form_key}]", $value, $template );
