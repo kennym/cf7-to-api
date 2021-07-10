@@ -448,6 +448,7 @@ endif;
   function get_record( $submission , $qs_cf7_data_map , $type = "params", $template = "" ){
 
     $submited_data = $submission->get_posted_data();
+    $uploaded_files = $submission->uploaded_files();
     $record = array();
 
     if( $type == "params" ){
@@ -470,6 +471,17 @@ endif;
             if( is_array( $value ) ){
               $value = reset( $value );
             }
+
+            // handle file input
+            if (isset($uploaded_files[$form_key])) {
+              // Put all files into an array
+              $value = [];
+              foreach ($uploaded_files[$form_key] as $path) {
+                $image_content = file_get_contents($path);
+                $value[] = base64_encode($image_content);
+              }
+            }
+
             $record["fields"][$qs_cf7_form_key] = apply_filters( 'set_record_value' , $value , $qs_cf7_form_key );
           }
 
@@ -508,6 +520,20 @@ endif;
           // handle boolean acceptance fields
           if( $this->isAcceptanceField($form_key) ) {
             $value = $value == "" ? "false" : "true";
+          }
+
+          // handle file input
+          if (isset($uploaded_files[$form_key])) {
+            
+            // Put all files into an array 
+            $value = [];
+            foreach ($uploaded_files[$form_key] as $path) {
+              $image_content = file_get_contents($path);
+              $value[] = base64_encode($image_content);
+            }
+            
+            // replace "[$form_key]" with json array of base64 strings
+            $template = preg_replace( "/(\")?\[{$form_key}\](\")?/", json_encode($value), $template );
           }
 
           $template = str_replace( "[{$form_key}]", $value, $template );
