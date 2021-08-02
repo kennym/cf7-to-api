@@ -70,7 +70,7 @@ class QS_CF7_api_admin{
     add_action( 'admin_init', array( $this, 'verify_dependencies' ) );
 
     /*before sending email to user actions */
-    add_action( 'wpcf7_before_send_mail', array( $this , 'qs_cf7_send_data_to_api' ) );
+    add_action( 'wpcf7_mail_sent', array( $this , 'qs_cf7_send_data_to_api' ));
 
     /* adds another tab to contact form 7 screen */
     add_filter( "wpcf7_editor_panels" ,array( $this , "add_integrations_tab" ) , 1 , 1 );
@@ -155,6 +155,7 @@ class QS_CF7_api_admin{
     $wpcf7_api_data["basic_auth"]   = isset( $wpcf7_api_data["basic_auth"] ) ? $wpcf7_api_data["basic_auth"]   : '';
     $wpcf7_api_data["bearer_auth"]   = isset( $wpcf7_api_data["bearer_auth"] ) ? $wpcf7_api_data["bearer_auth"]   : '';
     $wpcf7_api_data["send_to_api"]  = isset( $wpcf7_api_data["send_to_api"] ) ? $wpcf7_api_data["send_to_api"]   : '';
+    $wpcf7_api_data["override_message"]  = isset( $wpcf7_api_data["override_message"] ) ? $wpcf7_api_data["override_message"]   : '';
     $wpcf7_api_data["input_type"]   = isset( $wpcf7_api_data["input_type"] ) ? $wpcf7_api_data["input_type"]         : 'params';
     $wpcf7_api_data["method"]       = isset( $wpcf7_api_data["method"] ) ? $wpcf7_api_data["method"]             : 'GET';
     $wpcf7_api_data["debug_log"]    = true;
@@ -196,6 +197,16 @@ class QS_CF7_api_admin{
               </label>
 
           </div>
+
+          <div class="cf7_row">
+
+              <label for="wpcf7-sf-override_message">
+                  <input type="checkbox" id="wpcf7-sf-override_message" name="wpcf7-sf[override_message]" <?php checked( $wpcf7_api_data["override_message"] , "off" );?>/>
+                  <?php _e( 'Override message with api response body?' , $this->textdomain );?>
+              </label>
+
+          </div>
+
 
           <div class="cf7_row">
               <label for="wpcf7-sf-base_url">
@@ -413,10 +424,26 @@ endif;
         do_action( 'qs_cf7_api_before_sent_to_api' , $record );
 
         $response = $this->send_lead( $record , $qs_cf7_data['debug_log'] , $qs_cf7_data['method'] , $record_type, $qs_cf7_data["basic_auth"], $qs_cf7_data["bearer_auth"] );
+        $override_message = isset($qs_cf7_data["override_message"]) && $qs_cf7_data["override_message"] == "on";
 
         if( is_wp_error( $response ) ){
+          if ($override_message) {
+            $submission->set_response($response->get_error_message());
+          }
           $this->log_error( $response , $WPCF7_ContactForm->id() );
         }else{
+          if ($override_message) {
+            $body_string = wp_remote_retrieve_body($response);
+
+            $body = json_decode($body_string);
+            if (json_last_error() == 0) {
+              $submission->set_response($body->message);
+            }
+            else {
+              $submission->set_response($body_string);
+            } 
+          }
+
           do_action( 'qs_cf7_api_after_sent_to_api' , $record , $response );
         }
       }
@@ -682,8 +709,9 @@ endif;
       update_post_meta( $this->post->id() , 'qs_cf7_api_debug_result' , $result );
     }
 
-    return do_action('after_qs_cf7_api_send_lead' , $result , $record );
+    do_action('after_qs_cf7_api_send_lead' , $result , $record );
 
+    return $result;
   }
 
   private function parse_json( $string ){
