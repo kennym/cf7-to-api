@@ -76,6 +76,10 @@ For example:
 
 Changelog
 ---------
+### 1.4.10
+
+-   Add ability to override message with api response body (@Logikgate)
+
 ### 1.4.9
 
 -   Update flattening of acceptance fields to json boolean value
