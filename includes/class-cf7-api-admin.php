@@ -558,12 +558,9 @@ endif;
               $image_content = file_get_contents($path);
               $value[] = base64_encode($image_content);
             }
-            
-            // replace "[$form_key]" with json array of base64 strings
-            $template = preg_replace( "/(\")?\[{$form_key}\](\")?/", json_encode($value), $template );
           }
-
-          $template = str_replace( "[{$form_key}]", $value, $template );
+          // replace "[$form_key]" with json-encoded value
+          $template = preg_replace( "/(\")?\[{$form_key}\](\")?/", json_encode($value), $template );
         }
       }
 
