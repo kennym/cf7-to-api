@@ -76,6 +76,10 @@ For example:
 
 Changelog
 ---------
+### 1.4.11
+
+-   Support to new CF7 version
+
 ### 1.4.10
 
 -   Add ability to override message with api response body (@Logikgate)
