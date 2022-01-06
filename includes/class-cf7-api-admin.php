@@ -79,6 +79,7 @@ class QS_CF7_api_admin{
     add_action( "wpcf7_save_contact_form" ,array( $this , "qs_save_contact_form_details") , 10 , 1 );
 
     add_filter( "wpcf7_contact_form_properties" ,array( $this , "add_sf_properties" ) , 10 , 2 );
+    add_filter( "wpcf7_pre_construct_contact_form_properties" ,array( $this , "add_sf_properties" ) , 10 , 2 );
   }
 
   /**
