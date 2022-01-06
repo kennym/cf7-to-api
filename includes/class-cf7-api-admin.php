@@ -202,7 +202,7 @@ class QS_CF7_api_admin{
           <div class="cf7_row">
 
               <label for="wpcf7-sf-override_message">
-                  <input type="checkbox" id="wpcf7-sf-override_message" name="wpcf7-sf[override_message]" <?php checked( $wpcf7_api_data["override_message"] , "off" );?>/>
+                  <input type="checkbox" id="wpcf7-sf-override_message" name="wpcf7-sf[override_message]" <?php checked( $wpcf7_api_data["override_message"] , "on" );?>/>
                   <?php _e( 'Override message with api response body?' , $this->textdomain );?>
               </label>
 
