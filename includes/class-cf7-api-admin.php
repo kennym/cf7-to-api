@@ -373,8 +373,8 @@ endif;
 
     $properties['wpcf7_api_data']     = isset( $_POST["wpcf7-sf"] ) ? $_POST["wpcf7-sf"] : '';
     $properties['wpcf7_api_data_map'] = isset( $_POST["qs_wpcf7_api_map"] ) ? $_POST["qs_wpcf7_api_map"] : '';
-    $properties['template']           = isset( $_POST["template"] ) ? $_POST["template"] : '';
-    $properties['json_template']      = isset( $_POST["json_template"] ) ? $_POST["json_template"] : '';
+    $properties['template']           = isset( $_POST["template"] ) ? trim( wp_unslash( $_POST["template"] )) : '';
+    $properties['json_template']      = isset( $_POST["json_template"] ) ? trim( wp_unslash( $_POST["json_template"] )) : '';
     
     //extract custom placeholders    
     $record_type = isset( $properties['wpcf7_api_data']['input_type'] ) ? $properties['wpcf7_api_data']['input_type'] : 'params';
