@@ -146,10 +146,10 @@ class QS_CF7_api_admin{
    */
   function wpcf7_integrations( $post ) {
 
-    $wpcf7_api_data                = $post->prop( 'wpcf7_api_data' );
-    $wpcf7_api_data_map            = $post->prop( 'wpcf7_api_data_map' );
-    $wpcf7_api_data_template     = $post->prop( 'template' );
-    $wpcf7_api_json_data_template  = $post->prop( 'json_template' );
+    $wpcf7_api_data                = get_post_meta($post->id, '_wpcf7_api_data', true);
+    $wpcf7_api_data_map            = get_post_meta($post->id, '_wpcf7_api_data_map', true);
+    $wpcf7_api_data_template       = get_post_meta($post->id, 'template', true);
+    $wpcf7_api_json_data_template  = get_post_meta($post->id, 'json_template', true );
     $mail_tags                     = $this->get_mail_tags( $post );
 
     $wpcf7_api_data["base_url"]     = isset( $wpcf7_api_data["base_url"] ) ? $wpcf7_api_data["base_url"]         : '';
