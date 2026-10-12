@@ -12,40 +12,52 @@ Send Contact Form 7 submissions to a remote API with GET or POST.
 
 == Description ==
 
-Contact Form 7 to API adds an **API Integration** tab to each Contact Form 7 form. When the form is submitted, the plugin sends the entry to the URL you configure.
+Contact Form 7 to API adds an **API Integration** tab to each form. When the form is submitted, the entry is sent to the URL you set.
 
-* GET or POST.
-* Parameter fields, a JSON template, or an XML template.
-* Basic auth and Bearer auth, on both GET and POST.
-* Custom request headers.
-* Per-form timeout (default 15 seconds, maximum 60).
-* Contact Form 7 special mail-tags such as `[_remote_ip]`, `[_url]`, and `[_date]` inside JSON and XML templates.
-* File fields are sent as base64.
-* The last call is stored on the form for debugging. Secrets from the Authorization header are not stored.
+= What you can send =
 
-An HTTP response outside 200–299, or a transport failure, marks the submission failed and skips the Contact Form 7 email. Use “Show the API response body as the form message” when the visitor should see the API’s `message` field, or the raw body.
+* **Parameters.** Map each form field to an API key. GET adds the pairs to the query string. POST sends them as the body.
+* **JSON or XML.** Write a template and place form tags in it, such as `[your-name]` or `[_remote_ip]`.
+* **Files.** Uploads are sent as base64.
+* **Auth.** Basic auth (`user:secret`) or a Bearer token. Bearer is used when both are filled in, and both are sent on GET and POST.
+* **Headers.** One `Name: value` line each.
+* **Timeout.** Defaults to 15 seconds. You can set 1 to 60 seconds on the form.
 
-Basic or Bearer credentials are stored in the Contact Form 7 form. Anyone who can edit that form can read them.
+A JSON template looks like this:
 
-Do not activate a second copy of this plugin. The WordPress.org folder is `cf7-to-api-basic-auth`. A GitHub checkout uses the folder `cf7-to-api`. Activating both used to crash the site. Starting in 1.5.0 the second copy stops loading, but you should delete the extra folder.
+`{ "name": "[your-name]", "email": "[your-email]" }`
 
-The API URL is checked with WordPress’ `wp_http_validate_url()`. That allows public http and https URLs on ports 80, 443, and 8080. For a private host or another port, return the original URL from the `qs_cf7_api_validated_url` filter. Only do that for addresses you trust.
+If the URL already has a query string, mapped fields are added with `&`. `https://example.com/hook?token=abc` keeps the token, and the fields follow it.
+
+= When the call fails =
+
+A response outside HTTP 200–299, a connection error, or a rejected URL fails the submission and skips the Contact Form 7 email. The visitor sees the form's usual error message.
+
+Turn on **Show the API response body as the form message** to show a JSON `message` field, or a shortened copy of any other body.
+
+The last call is saved on the form. Open **DEBUG LOG** on the API Integration tab. Authorization header values are not stored.
+
+= Good to know =
+
+* Credentials are stored in the form. Anyone who can edit the form can read them.
+* Keep one copy of the plugin active. WordPress.org installs it in `cf7-to-api-basic-auth`. A GitHub checkout uses `cf7-to-api`. Version 1.5.0 and newer skip loading when another copy is already active. Delete the extra folder.
+* WordPress allows public http and https URLs on ports 80, 443, and 8080. For a private host or another port, return that URL from the `qs_cf7_api_validated_url` filter, and only for an address you trust.
 
 == Installation ==
 
 1. Install and activate Contact Form 7.
-2. Install and activate Contact Form 7 to API.
-3. Edit a form, open the API Integration tab, and save.
+2. Install and activate Contact Form 7 to API. It can be activated first, and it shows a notice until Contact Form 7 is active.
+3. Edit a form, open the **API Integration** tab, and save.
 
 == Frequently Asked Questions ==
 
 = Where are the settings? =
 
-Edit the form and open the API Integration tab. Older readme text called this “Redirect Settings”. That name was wrong.
+Edit the form and open the **API Integration** tab.
 
 = The URL already has a query string. Will my fields replace it? =
 
-No. Fields are appended with `&`. `https://example.test/build?token=abc` stays intact and the mapped fields follow it.
+No. Fields are appended with `&`. `https://example.com/hook?token=abc` keeps `token=abc`, and the mapped fields follow it.
 
 = Does Basic auth work with GET? =
 
@@ -53,15 +65,19 @@ Yes. The Authorization header is sent for GET and POST. If both Basic and Bearer
 
 = Can I add my own headers? =
 
-Yes. Use the Custom headers box, one `Name: value` line each. The `qs_cf7_api_get_args` filter still runs for both GET and POST and can change the request arguments.
+Yes. Use the Custom headers box, one `Name: value` line each. The `qs_cf7_api_get_args` filter can still change the request for GET and POST.
 
 = What happens when the API returns an error? =
 
-Responses outside HTTP 200–299 fail the form and the email is not sent. The visitor sees the form’s “There was an error trying to send your message” text unless you enable the response-body message.
+The form fails and the email is not sent. The visitor sees the form's usual failure text, unless you turn on **Show the API response body as the form message**.
 
 = Who can see the API credentials? =
 
 Anyone who can edit the form. They are stored in the form, not in a separate encrypted option.
+
+= Can I change the request in code? =
+
+Yes. `cf7api_create_record` replaces the payload. `qs_cf7_api_get_args`, `qs_cf7_api_get_url`, `qs_cf7_api_post_url`, and `qs_cf7_api_timeout` adjust the HTTP call. `qs_cf7_api_validated_url` accepts a URL that WordPress would otherwise reject.
 
 == Upgrade Notice ==
 

@@ -68,7 +68,7 @@ class QS_Admin_notices {
 		wp_register_script(
 			'qs-cf7-api-admin-notices-script',
 			QS_CF7_API_ADMIN_JS_URL . 'admin-notices-script.js',
-			array( 'jquery' ),
+			array(),
 			QS_CF7_API_VERSION,
 			true
 		);
