@@ -16,9 +16,11 @@ Contact Form 7 to API adds an **API Integration** tab to each form. When the for
 
 = What you can send =
 
-* **Parameters.** Map each form field to an API key. GET adds the pairs to the query string. POST sends them as the body.
-* **JSON or XML.** Write a template and place form tags in it, such as `[your-name]` or `[_remote_ip]`.
-* **Files.** Uploads are sent as base64.
+* **Parameters.** Map each form field to an API key. GET adds the pairs to the query string and sends no body. POST sends them as the body.
+* **JSON.** The filled template is the request body for both GET and POST.
+* **XML.** The filled template is the request body. XML is always sent as POST, and the method menu is hidden.
+* **Files.** Uploads are sent as base64. A file larger than 8 MB is left out.
+* **Acceptance.** In JSON, an acceptance field is a boolean: `true` when checked and `false` when it is not. In XML and in parameter mode it is the text `true` or `false`.
 * **Auth.** Basic auth (`user:secret`) or a Bearer token. Bearer is used when both are filled in, and both are sent on GET and POST.
 * **Headers.** One `Name: value` line each.
 * **Timeout.** Defaults to 15 seconds. You can set 1 to 60 seconds on the form.
@@ -42,6 +44,21 @@ The last call is saved on the form. Open **DEBUG LOG** on the API Integration ta
 * Credentials are stored in the form. Anyone who can edit the form can read them.
 * Keep one copy of the plugin active. WordPress.org installs it in `cf7-to-api-basic-auth`. A GitHub checkout uses `cf7-to-api`. Version 1.5.0 and newer skip loading when another copy is already active. Delete the extra folder.
 * WordPress allows public http and https URLs on ports 80, 443, and 8080. For a private host or another port, return that URL from the `qs_cf7_api_validated_url` filter, and only for an address you trust.
+
+== External service ==
+
+This plugin does not call a service of its own. Nothing is sent until **Send to API** is turned on for that form. The request then goes to the URL entered on the API Integration tab. You choose that address. Its terms of use and privacy policy are the ones published by whoever runs it.
+
+The request can include:
+
+* Mapped field values, or the filled JSON or XML template.
+* File contents, as base64, for files of 8 MB or less.
+* Any special mail-tag you put in a template. `[_remote_ip]` is the visitor's IP address. `[_url]` is the page URL.
+* The Basic or Bearer credential, in the Authorization header, when one is saved on the form.
+
+On your own site, the API URL, credentials, templates, and field map are stored in the Contact Form 7 form. The debug log stores the last called URL, request body, header names, response code, response body, and error on that same form. Authorization header values are not stored.
+
+Deleting the plugin removes the option that remembers dismissed notices. It leaves Contact Form 7 posts in place, including the API settings and the debug log.
 
 == Installation ==
 
@@ -74,6 +91,14 @@ The form fails and the email is not sent. The visitor sees the form's usual fail
 = Who can see the API credentials? =
 
 Anyone who can edit the form. They are stored in the form, not in a separate encrypted option.
+
+= Does JSON GET send a body? =
+
+Yes. Parameter mode is the one that puts fields on the query string and sends no body. A JSON template is sent as the body for GET and POST. XML is always POST.
+
+= What is removed on uninstall? =
+
+Only the option that remembers dismissed notices. Form settings and the debug log stay on the Contact Form 7 posts.
 
 = Can I change the request in code? =
 

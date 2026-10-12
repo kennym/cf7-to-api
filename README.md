@@ -15,17 +15,18 @@ The WordPress.org plugin is [Contact Form 7 to API](https://wordpress.org/plugin
 ## Install
 
 1. Install and activate Contact Form 7.
-2. Install this plugin from WordPress.org, or copy this repository into `wp-content/plugins/cf7-to-api-basic-auth`.
+2. Install **Contact Form 7 to API** from WordPress.org. That copy lives in `wp-content/plugins/cf7-to-api-basic-auth`.
 3. Edit a form and open the **API Integration** tab.
 
-Keep one copy active. WordPress.org uses the folder `cf7-to-api-basic-auth`. A checkout of this repository uses `cf7-to-api`. Version 1.5.0 and newer skip loading when another copy is already active. Delete the extra folder.
+To run this repository instead, clone it so the folder is `wp-content/plugins/cf7-to-api`. Do not activate that folder and `cf7-to-api-basic-auth` together. Version 1.5.0 and newer skip loading when another copy is already active. Delete the extra folder. An old 1.4 copy can still stop the site if it loads after this one.
 
 ## Setup
 
 Choose how the entry is sent:
 
-* **Parameters.** Map each form field to an API key. GET adds the pairs to the query string. POST sends them as the body.
-* **JSON or XML.** Write a template and put Contact Form 7 tags in it, including special tags such as `[_remote_ip]`, `[_url]`, and `[_date]`.
+* **Parameters.** Map each form field to an API key. GET adds the pairs to the query string and sends no body. POST sends them as the body.
+* **JSON.** The filled template is the body for both GET and POST. Tags such as `[your-name]`, `[_remote_ip]`, `[_url]`, and `[_date]` are replaced.
+* **XML.** The filled template is the body. XML is always sent as POST.
 
 ```json
 {
@@ -39,7 +40,7 @@ A URL that already has a query string keeps it. `https://example.com/hook?token=
 
 Basic auth (`user:secret`) and Bearer auth are sent on GET and POST. When both are filled in, Bearer is used. Custom headers are one `Name: value` line each. The timeout defaults to 15 seconds and can be set from 1 to 60.
 
-Uploaded files are sent as base64.
+Uploaded files are sent as base64. A file larger than 8 MB is left out. In JSON, an acceptance field is a boolean: `true` when checked and `false` when it is not. In XML and in parameter mode it is the text `true` or `false`.
 
 ## Errors
 
@@ -52,6 +53,16 @@ The API Integration tab stores the last call for debugging. Authorization header
 `wp_http_validate_url()` allows public `http` and `https` URLs on ports 80, 443, and 8080. For a private host or another port, return the URL from `qs_cf7_api_validated_url`.
 
 Credentials are stored in the form. Anyone who can edit that form can read them.
+
+## Data sent off the site
+
+This plugin has no service of its own. With **Send to API** turned on, the submission goes to the URL saved on that form. You choose the address. The terms and privacy policy that apply are the ones published by whoever runs it.
+
+The request can include mapped fields or the filled template, file contents up to 8 MB as base64, and any special tag in the template. `[_remote_ip]` is the visitor's IP address. A saved Basic or Bearer credential is sent in the Authorization header.
+
+The API URL, credentials, templates, field map, and last debug log are stored on the Contact Form 7 post. The debug log keeps the called URL, request body, header names, response code, response body, and error. It does not keep Authorization header values.
+
+Uninstall deletes the dismissed-notices option only. Form settings and the debug log remain.
 
 ## Hooks
 
