@@ -4,7 +4,7 @@ Tags: contact form 7, api, webhook, crm, rest api
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,10 +65,17 @@ Anyone who can edit the form. They are stored in the form, not in a separate enc
 
 == Upgrade Notice ==
 
+= 1.5.1 =
+API responses outside HTTP 200-299 fail the form and skip the email. The default timeout is 15 seconds. Re-save a form if a JSON or XML template shows extra backslashes.
+
 = 1.5.0 =
 API responses outside HTTP 200-299 now fail the form and skip the email. The default timeout is 15 seconds. Re-save a form if a JSON or XML template shows extra backslashes.
 
 == Changelog ==
+
+= 1.5.1 =
+
+* Maintenance release. The directory index file contains a short PHP comment so coding-standards checks can read it. Form and API behavior match 1.5.0.
 
 = 1.5.0 =
 
