@@ -1,84 +1,86 @@
 <?php
 /**
- * Contact form 7 API
+ * Contact Form 7 to API.
  *
- *
- * @link
+ * @link              https://github.com/kennym/cf7-to-api
  * @since             1.0.0
  * @package           qs_cf7_api
  *
  * @wordpress-plugin
- * Plugin Name:       Contact form 7 to api + Basic auth
- * Plugin URI:        https://github.com/kennym/cf7-to-api
- * Description:       Connect contact forms 7 to remote API using GET or POST.
- * Version:           1.4.11
+ * Plugin Name:       Contact Form 7 to API
+ * Plugin URI:        https://wordpress.org/plugins/cf7-to-api-basic-auth/
+ * Description:       Send Contact Form 7 submissions to a remote API with GET or POST.
+ * Version:           1.5.0
+ * Requires at least: 6.7
+ * Requires PHP:      7.4
  * Author:            Kenny Meyer
- * Author URI: 		    https://www.kennymeyer.net
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * Author URI:        https://www.kennymeyer.net
+ * License:           GPL-2.0-or-later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       qs-cf7-api
  * Domain Path:       /languages
  */
-// If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-	die;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-
-define( 'QS_CF7_API_PLUGIN_PATH' , plugin_dir_path( __FILE__ ) );
-define( 'QS_CF7_API_INCLUDES_PATH' , plugin_dir_path( __FILE__ ). 'includes/' );
-define( 'QS_CF7_API_TEMPLATE_PATH' , get_template_directory() );
-define( 'QS_CF7_API_ADMIN_JS_URL' , plugin_dir_url( __FILE__ ). 'assets/js/' );
-define( 'QS_CF7_API_ADMIN_CSS_URL' , plugin_dir_url( __FILE__ ). 'assets/css/' );
-define( 'QS_CF7_API_FRONTEND_JS_URL' , plugin_dir_url( __FILE__ ). 'assets/js/' );
-define( 'QS_CF7_API_FRONTEND_CSS_URL' , plugin_dir_url( __FILE__ ). 'assets/css/' );
-define( 'QS_CF7_API_IMAGES_URL' , plugin_dir_url( __FILE__ ). 'assets/css/' );
-
-add_action( 'plugins_loaded', 'qs_cf7_textdomain' );
-/**
- * Load plugin textdomain.
- *
- * @since 1.0.0
- */
-function qs_cf7_textdomain() {
-    load_plugin_textdomain( 'qs-cf7-api', false, basename( dirname( __FILE__ ) ) . '/languages' );
+// A second copy (GitHub folder cf7-to-api plus the .org folder
+// cf7-to-api-basic-auth) used to fatal on activation. Bail out instead.
+if ( defined( 'QS_CF7_API_LOADED' ) || function_exists( 'qs_cf7_textdomain' ) || class_exists( 'QS_CF7_atp_integration', false ) ) {
+	return;
 }
-/**
- * The core plugin class
- */
+
+define( 'QS_CF7_API_LOADED', true );
+define( 'QS_CF7_API_VERSION', '1.5.0' );
+define( 'QS_CF7_API_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+define( 'QS_CF7_API_INCLUDES_PATH', plugin_dir_path( __FILE__ ) . 'includes/' );
+define( 'QS_CF7_API_ADMIN_JS_URL', plugin_dir_url( __FILE__ ) . 'assets/js/' );
+define( 'QS_CF7_API_ADMIN_CSS_URL', plugin_dir_url( __FILE__ ) . 'assets/css/' );
+
 require_once QS_CF7_API_INCLUDES_PATH . 'class.cf7-api.php';
 
 /**
- * Activation and deactivation hooks
+ * Load translations.
  *
+ * @return void
  */
-register_activation_hook( __FILE__ ,  'cf7_api_activation_handler'  );
-register_deactivation_hook( __FILE__ , 'cf7_api_deactivation_handler' );
-
-
-function cf7_api_activation_handler(){
-    do_action( 'cf7_api_activated' );
+function qs_cf7_api_load_textdomain() {
+	load_plugin_textdomain( 'qs-cf7-api', false, basename( __DIR__ ) . '/languages' );
 }
+add_action( 'plugins_loaded', 'qs_cf7_api_load_textdomain', 10 );
 
-function cf7_api_deactivation_handler(){
-    do_action( 'cf7_api_deactivated' );
-}
 /**
- * Begins execution of the plugin.
+ * Create the plugin instance after Contact Form 7 has loaded.
  *
- * Init the plugin process
- *
- * @since    1.0.0
+ * @return void
  */
-function qs_init_cf7_api() {
-    global $qs_cf7_api;
+function qs_cf7_api_bootstrap() {
+	global $qs_cf7_api;
 
-	$qs_cf7_api = new QS_CF7_atp_integration();
-	$qs_cf7_api->version = '1.1.1';
+	$qs_cf7_api                  = new QS_CF7_atp_integration();
+	$qs_cf7_api->version         = QS_CF7_API_VERSION;
 	$qs_cf7_api->plugin_basename = plugin_basename( __FILE__ );
+}
+add_action( 'plugins_loaded', 'qs_cf7_api_bootstrap', 11 );
 
-	$qs_cf7_api->init();
-
+/**
+ * Activation hook. Kept so existing listeners of cf7_api_activated still run.
+ *
+ * @return void
+ */
+function qs_cf7_api_activate() {
+	do_action( 'cf7_api_activated' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook.
 }
 
-qs_init_cf7_api();
+/**
+ * Deactivation hook.
+ *
+ * @return void
+ */
+function qs_cf7_api_deactivate() {
+	do_action( 'cf7_api_deactivated' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Legacy hook.
+}
+
+register_activation_hook( __FILE__, 'qs_cf7_api_activate' );
+register_deactivation_hook( __FILE__, 'qs_cf7_api_deactivate' );

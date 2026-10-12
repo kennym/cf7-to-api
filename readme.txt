@@ -1,154 +1,143 @@
-Contact form 7 TO API + Basic Auth
-==================================
+=== Contact Form 7 to API ===
+Contributors: kennymeyer
+Tags: contact form 7, api, webhook, crm, rest api
+Requires at least: 6.7
+Tested up to: 7.1
+Requires PHP: 7.4
+Stable tag: 1.5.0
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-MAINTAINER NEEDED. Please email me if you're interested.
+Send Contact Form 7 submissions to a remote API with GET or POST.
 
--   Tags: contact form 7 to api,contact form 7,cf7 api,cf7 get,contact
-    form 7 post,contact form7 get,contact form 7 remote, Contact form 7
-    crm, contact form 7 integration,contact form 7 integrations, contact
-    form 7 rest api,
--   Requires at least: 4.7.0
--   Tested up to: 5.2.2
--   Stable tag: 1.4.5
--   License: GPLv3 or later
--   License URI: <http://www.gnu.org/licenses/gpl-3.0.html>
+== Description ==
 
-An addon to transmit contact form 7 entries to remote API using POST or
-GET.
+Contact Form 7 to API adds an **API Integration** tab to each Contact Form 7 form. When the form is submitted, the plugin sends the entry to the URL you configure.
 
-Description
------------
+* GET or POST.
+* Parameter fields, a JSON template, or an XML template.
+* Basic auth and Bearer auth, on both GET and POST.
+* Custom request headers.
+* Per-form timeout (default 15 seconds, maximum 60).
+* Contact Form 7 special mail-tags such as `[_remote_ip]`, `[_url]`, and `[_date]` inside JSON and XML templates.
+* File fields are sent as base64.
+* The last call is stored on the form for debugging. Secrets from the Authorization header are not stored.
 
-Adds an option to send leads to remote API's such as CRM's ERP's and
-other remote systems using POST/GET.
-NOTE: This plugin requires Contact Form 7 version 4.2 or later.
+An HTTP response outside 200–299, or a transport failure, marks the submission failed and skips the Contact Form 7 email. Use “Show the API response body as the form message” when the visitor should see the API’s `message` field, or the raw body.
 
--   Supports XML and JSON\
--   Supports Basic Auth\
--   Supports Bearer Auth
+Basic or Bearer credentials are stored in the Contact Form 7 form. Anyone who can edit that form can read them.
 
-Usage
------
+Do not activate a second copy of this plugin. The WordPress.org folder is `cf7-to-api-basic-auth`. A GitHub checkout uses the folder `cf7-to-api`. Activating both used to crash the site. Starting in 1.5.0 the second copy stops loading, but you should delete the extra folder.
 
-Simply go to your form settings, choose the "Redirect Settings" tab and
-set your required parameters,
+The API URL is checked with WordPress’ `wp_http_validate_url()`. That allows public http and https URLs on ports 80, 443, and 8080. For a private host or another port, return the original URL from the `qs_cf7_api_validated_url` filter. Only do that for addresses you trust.
 
-1.  Chose wether the specific form will use the API integrations
-2.  Type the API url
-3.  Select the method (POST/GET)
-4.  map the form fields (Each field that you use on the form will be
-    availble on this tab after saving the form)
-5.  choose wether you wish to debug and save the last transmited value.
+== Installation ==
 
-Installation
-------------
+1. Install and activate Contact Form 7.
+2. Install and activate Contact Form 7 to API.
+3. Edit a form, open the API Integration tab, and save.
 
-Installing Contact form 7 TO API can be done either by searching for
-"Contact form 7 TO API" via the "Plugins \> Add New" screen in your
-WordPress dashboard, or by using the following steps:
+== Frequently Asked Questions ==
 
-1.  Download the plugin via WordPress.org.
-2.  Upload the ZIP file through the "Plugins" \> Add New \> Upload
-    screen in your WordPress dashboard.
-3.  Activate the plugin through the 'Plugins' menu in WordPress
-4.  Visit the settings screen and configure, as desired.
+= Where are the settings? =
 
-Frequently Asked Questions
---------------------------
+Edit the form and open the API Integration tab. Older readme text called this “Redirect Settings”. That name was wrong.
 
-= How can i redirect the user after success ? =
-You can use another plugin for that - Contact Form 7 Redirection
+= The URL already has a query string. Will my fields replace it? =
 
-<https://wordpress.org/plugins/wpcf7-redirect/>
+No. Fields are appended with `&`. `https://example.test/build?token=abc` stays intact and the mapped fields follow it.
 
-### How can i set Extra parameters?
+= Does Basic auth work with GET? =
 
-You could set hidden fields for that
+Yes. The Authorization header is sent for GET and POST. If both Basic and Bearer are filled in, Bearer is used.
 
-<https://contactform7.com/hidden-field/>
+= Can I add my own headers? =
 
-OR
+Yes. Use the Custom headers box, one `Name: value` line each. The `qs_cf7_api_get_args` filter still runs for both GET and POST and can change the request arguments.
 
-simply append the constant parameters to the url
-For example:
+= What happens when the API returns an error? =
 
-<http://my-api-url?const1=some_value&const2=some_value>
+Responses outside HTTP 200–299 fail the form and the email is not sent. The visitor sees the form’s “There was an error trying to send your message” text unless you enable the response-body message.
 
-Changelog
----------
-### 1.4.11
+= Who can see the API credentials? =
 
--   Support to new CF7 version
+Anyone who can edit the form. They are stored in the form, not in a separate encrypted option.
 
-### 1.4.10
+== Upgrade Notice ==
 
--   Add ability to override message with api response body (@Logikgate)
+= 1.5.0 =
+API responses outside HTTP 200-299 now fail the form and skip the email. The default timeout is 15 seconds. Re-save a form if a JSON or XML template shows extra backslashes.
 
-### 1.4.9
+== Changelog ==
 
--   Update flattening of acceptance fields to json boolean value
--   Add function to check if a field is an acceptance field
--   Convert array to csv (@NicoP-S)
--   support multiple file uploads (@NicoP-S)
+= 1.5.0 =
 
-### 1.4.8
+* Requires WordPress 6.7 and PHP 7.4. Tested with WordPress 7.1 and Contact Form 7 5.9 through 6.2.
+* Fixes a fatal error when two copies of the plugin are active.
+* Fixes saving JSON and XML templates so quotes are no longer stored as backslashes.
+* Fixes a PHP 8 error when a JSON or XML template is saved without a field map.
+* Appends fields to an existing query string with `&`, and sends Basic and Bearer auth on GET.
+* Encodes JSON values, so quotes, newlines, and dollar signs stay valid JSON. XML values are escaped.
+* Resolves Contact Form 7 special mail-tags in templates.
+* Adds a timeout field and a custom headers field. Requests use HTTP/1.1.
+* A non-2xx response, a transport error, or an invalid API URL fails the submission and skips the email.
+* Escapes the API tab, checks a nonce and capability before dismissing notices, and limits assets to Contact Form 7 screens.
+* Removes the unused template-helper class.
 
--   Revert handle single quotes
+= 1.4.11 =
 
-### 1.4.7
+* Support the Contact Form 7 property loader used by current CF7 releases.
 
--   Compatibility fixes
+= 1.4.10 =
 
-### 1.4.5
+* Option to show the API response body as the form message.
 
--   Handle line breaks
+= 1.4.9 =
 
-### 1.4.4
+* Acceptance fields can be sent as JSON booleans.
+* Multiple files can be sent.
+* Multi-value fields in templates are joined when a single text value is required.
 
--   Extract custom placeholders from template
+= 1.4.8 =
 
-### 1.4.3
+* Revert single-quote handling.
 
--   Fixed bearer token Usage
--   Update WooCommerce plugin name
+= 1.4.7 =
 
-### 1.4.2
+* Compatibility fixes.
 
--   Bug fix
+= 1.4.5 =
 
-### 1.4.1
+* Handle line breaks.
 
--   Support for WP 5
+= 1.4.4 =
 
-### 1.3.0
+* Read custom placeholders out of the template.
 
--   Add Basic Auth option
+= 1.4.3 =
 
-### 1.2.0
+* Bearer token fix.
 
--   Added better support for checkbox arrays and radio buttons
--   Added record filter to override record structure
-    "cf7api\_create\_record"
+= 1.4.2 =
 
-### 1.1.1
+* Bug fix.
 
--   Fix version number
+= 1.4.1 =
 
-### 1.1.0
+* WordPress 5 support.
 
--   Added send XML option.
--   Added send JSON option.
--   Added error log.
--   Debug log for each form
--   Debug log view changed
--   Debug log is now saved anyway
+= 1.3.0 =
 
-### 1.0.1
+* Basic auth.
 
--   Fix code errors and notices.
+= 1.2.0 =
 
-### 1.0.0
+* Checkbox arrays and the `cf7api_create_record` filter.
 
--   Initial release.
+= 1.1.0 =
 
+* XML, JSON, and the per-form debug log.
 
+= 1.0.0 =
+
+* Initial release.

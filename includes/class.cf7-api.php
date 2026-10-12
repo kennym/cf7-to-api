@@ -1,104 +1,86 @@
 <?php
+/**
+ * Plugin loader.
+ *
+ * @package qs_cf7_api
+ */
 
-// If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-	die;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-class QS_CF7_atp_integration{
-
-    /**
-	 * The plugin identifier.
-	 *
-	 * @since    1.0.0
-	 * @access   protected
-	 * @var      string    $plugin_name unique plugin id.
-	 */
-	protected $plugin_name;
-
-    /**
-	 * save the instance of the plugin for static actions.
-	 *
-	 * @since    1.0.0
-	 * @access   protected
-	 * @var      string    $instance    an instance of the class.
-	 */
-    public static $instance;
-
-    /**
-     * a reference to the admin class.
-     *
-     * @since    1.0.0
-     * @access   protected
-     * @var      object
-     */
-    public $admin;
+/**
+ * Boots admin UI and the submission handler.
+ */
+class QS_CF7_atp_integration {
 
 	/**
-     * a reference to the plugin status .
-     *
-     * @since    1.0.0
-     * @access   protected
-     * @var      object    $admin    an instance of the admin class.
-     */
-    private $woocommerce_is_active;
-    /**
-	 * Define the plugin functionality.
+	 * Plugin version.
 	 *
-	 * set plugin name and version , and load dependencies
-	 *
-	 * @since    1.0.0
+	 * @var string
 	 */
-     public function __construct() {
-         $this->plugin_name = 'wc-cf7-api-form';
-         
+	public $version = '';
 
-         $this->load_dependencies();
+	/**
+	 * Plugin basename.
+	 *
+	 * @var string
+	 */
+	public $plugin_basename = '';
 
-         /**
-          * Create an instance of the admin class
-          * @var QS_CF7_api_admin
-          */
-         $this->admin = new QS_CF7_api_admin();
-         $this->admin->plugin_name = $this->plugin_name;
+	/**
+	 * Plugin slug.
+	 *
+	 * @var string
+	 */
+	public $plugin_name = '';
 
-         /**
-          * save the instance for static actions
-          *
-          */
-         self::$instance = $this;
+	/**
+	 * Admin and request handler.
+	 *
+	 * @var QS_CF7_api_admin
+	 */
+	public $admin;
 
-     }
-     public function init(){
-         
-     }
-     /**
-      * Loads the required plugin files
-      * @return [type] [description]
-      */
-     public function load_dependencies(){
-         /**
- 		 * General global plugin functions
- 	    */
-         require_once QS_CF7_API_INCLUDES_PATH . 'class.cf7-helpers.php';
-         /**
-        * admin notices class
-        */
-         require_once QS_CF7_API_INCLUDES_PATH . 'class.qs-admin-notices.php';
-         /**
-        * admin notices clclass
-        */
-         require_once QS_CF7_API_INCLUDES_PATH . 'class-cf7-api-admin.php';
-     }
-     /**
-      * Get the current plugin instance
-      * @return [type] [description]
-      */
-     public static function get_instance() {
-         if (self::$instance === null) {
-             self::$instance = new self();
-         }
-         return self::$instance;
-     }
+	/**
+	 * Singleton instance.
+	 *
+	 * @var self|null
+	 */
+	public static $instance;
 
+	/**
+	 * Load dependencies and register hooks.
+	 */
+	public function __construct() {
+		$this->plugin_name = 'qs-cf7-api';
+		$this->load_dependencies();
+		$this->admin              = new QS_CF7_api_admin();
+		$this->admin->plugin_name = $this->plugin_name;
+		self::$instance           = $this;
+	}
+
+	/**
+	 * Require class files.
+	 *
+	 * @return void
+	 */
+	public function load_dependencies() {
+		require_once QS_CF7_API_INCLUDES_PATH . 'qs-cf7-api-functions.php';
+		require_once QS_CF7_API_INCLUDES_PATH . 'class.qs-admin-notices.php';
+		require_once QS_CF7_API_INCLUDES_PATH . 'class-cf7-api-admin.php';
+	}
+
+	/**
+	 * Current plugin instance.
+	 *
+	 * @return self
+	 */
+	public static function get_instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
 }
