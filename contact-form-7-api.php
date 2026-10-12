@@ -10,7 +10,7 @@
  * Plugin Name:       Contact Form 7 to API
  * Plugin URI:        https://wordpress.org/plugins/cf7-to-api-basic-auth/
  * Description:       Send Contact Form 7 submissions to a remote API with GET or POST.
- * Version:           1.5.2
+ * Version:           1.5.3
  * Requires at least: 6.7
  * Requires PHP:      7.4
  * Author:            Kenny Meyer
@@ -32,7 +32,7 @@ if ( defined( 'QS_CF7_API_LOADED' ) || function_exists( 'qs_cf7_textdomain' ) ||
 }
 
 define( 'QS_CF7_API_LOADED', true );
-define( 'QS_CF7_API_VERSION', '1.5.2' );
+define( 'QS_CF7_API_VERSION', '1.5.3' );
 define( 'QS_CF7_API_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'QS_CF7_API_INCLUDES_PATH', plugin_dir_path( __FILE__ ) . 'includes/' );
 define( 'QS_CF7_API_ADMIN_JS_URL', plugin_dir_url( __FILE__ ) . 'assets/js/' );
