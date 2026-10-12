@@ -1103,7 +1103,7 @@ class QS_CF7_api_admin {
 		return array(
 			'send_to_api'      => ( isset( $raw['send_to_api'] ) && 'on' === $raw['send_to_api'] ) ? 'on' : '',
 			'override_message' => ( isset( $raw['override_message'] ) && 'on' === $raw['override_message'] ) ? 'on' : '',
-			'base_url'         => isset( $raw['base_url'] ) ? esc_url_raw( (string) $raw['base_url'] ) : '',
+			'base_url'         => isset( $raw['base_url'] ) ? esc_url_raw( trim( (string) $raw['base_url'] ) ) : '',
 			'basic_auth'       => isset( $raw['basic_auth'] ) ? sanitize_text_field( (string) $raw['basic_auth'] ) : '',
 			'bearer_auth'      => isset( $raw['bearer_auth'] ) ? sanitize_text_field( (string) $raw['bearer_auth'] ) : '',
 			'input_type'       => $this->allow( $input_type, array( 'params', 'xml', 'json' ), 'params' ),
