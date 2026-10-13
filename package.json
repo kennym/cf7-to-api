@@ -1,7 +1,7 @@
 {
 	"name": "cf7-to-api",
 	"private": true,
-	"version": "1.5.3",
+	"version": "1.5.4",
 	"description": "Send Contact Form 7 submissions to a remote API.",
 	"license": "GPL-2.0-or-later",
 	"scripts": {

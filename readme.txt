@@ -4,7 +4,7 @@ Tags: contact form 7, api, webhook, crm, rest api
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,9 @@ Yes. `cf7api_create_record` replaces the payload. `qs_cf7_api_get_args`, `qs_cf7
 
 == Upgrade Notice ==
 
+= 1.5.4 =
+API responses outside HTTP 200-299 fail the form and skip the email. The default timeout is 15 seconds. Re-save a form if a JSON or XML template shows extra backslashes.
+
 = 1.5.3 =
 API responses outside HTTP 200-299 fail the form and skip the email. The default timeout is 15 seconds. Re-save a form if a JSON or XML template shows extra backslashes.
 
@@ -119,6 +122,10 @@ API responses outside HTTP 200-299 fail the form and skip the email. The default
 API responses outside HTTP 200-299 now fail the form and skip the email. The default timeout is 15 seconds. Re-save a form if a JSON or XML template shows extra backslashes.
 
 == Changelog ==
+
+= 1.5.4 =
+
+* Trim surrounding whitespace from the saved API endpoint URL. An already encoded %20 is left as-is.
 
 = 1.5.3 =
 
