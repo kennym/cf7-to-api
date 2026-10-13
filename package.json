@@ -1,0 +1,13 @@
+{
+	"name": "cf7-to-api",
+	"private": true,
+	"version": "1.5.3",
+	"description": "Send Contact Form 7 submissions to a remote API.",
+	"license": "GPL-2.0-or-later",
+	"scripts": {
+		"test:release": "node --test scripts/sync-wordpress-release.test.mjs"
+	},
+	"devDependencies": {
+		"@changesets/cli": "3.0.3"
+	}
+}

@@ -1,3 +1,5 @@
 .svn
 /vendor/
+/node_modules/
 .phpunit.result.cache
+release-version.txt

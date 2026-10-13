@@ -1,0 +1,145 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: SVN version to rehearse. Use a version that is not already a tag.
+        required: true
+        default: 9.9.9-dry
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  changeset:
+    if: github.event_name == 'pull_request' && github.head_ref != 'changeset-release/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node --test scripts/sync-wordpress-release.test.mjs
+      - run: git fetch origin master
+      - run: npx changeset status --since origin/master
+
+  release:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.mark.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node --test scripts/sync-wordpress-release.test.mjs
+      - id: changesets
+        uses: changesets/action@v2.1.2
+        with:
+          version-script: node scripts/version-plugin.mjs
+          publish-script: node scripts/mark-release.mjs
+          commit-message: Release plugin
+          pr-title: Release plugin
+          create-github-releases: false
+          push-git-tags: false
+      - name: Describe the WordPress publish in the release pull request
+        if: steps.changesets.outputs.pr-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          number="${{ steps.changesets.outputs.pr-number }}"
+          gh pr view "$number" --json body --jq .body > "$RUNNER_TEMP/pr-body.md"
+          node --input-type=module -e "
+            import { readFileSync, writeFileSync } from 'node:fs';
+            const path = process.env.RUNNER_TEMP + '/pr-body.md';
+            const body = readFileSync(path, 'utf8').replace(
+              'published to npm automatically',
+              'tagged and published to WordPress.org and GitHub automatically',
+            );
+            writeFileSync(path, body);
+          "
+          gh pr edit "$number" --body-file "$RUNNER_TEMP/pr-body.md"
+      - id: mark
+        run: |
+          if [ -f release-version.txt ]; then
+            echo "version=$(tr -d '[:space:]' < release-version.txt)" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=" >> "$GITHUB_OUTPUT"
+          fi
+
+  test:
+    needs: release
+    if: needs.release.outputs.version != ''
+    uses: ./.github/workflows/tests.yml
+
+  publish:
+    needs: [release, test]
+    if: needs.release.outputs.version != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/check-release-versions.mjs
+      - id: deploy
+        uses: 10up/action-wordpress-plugin-deploy@2.3.0
+        with:
+          generate-zip: true
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: cf7-to-api-basic-auth
+          VERSION: ${{ needs.release.outputs.version }}
+      - name: Tag and create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          node scripts/print-release-notes.mjs > "$RUNNER_TEMP/notes.md"
+          if git rev-parse --verify --quiet "refs/tags/${VERSION}" >/dev/null; then
+            git push origin "refs/tags/${VERSION}"
+          else
+            git tag "${VERSION}"
+            git push origin "refs/tags/${VERSION}"
+          fi
+          if gh release view "${VERSION}" >/dev/null 2>&1; then
+            gh release upload "${VERSION}" "${{ steps.deploy.outputs.zip-path }}" --clobber
+          else
+            gh release create "${VERSION}" --title "${VERSION}" --notes-file "$RUNNER_TEMP/notes.md" "${{ steps.deploy.outputs.zip-path }}"
+          fi
+
+  dry-run:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: 10up/action-wordpress-plugin-deploy@2.3.0
+        with:
+          dry-run: true
+          generate-zip: true
+        env:
+          SLUG: cf7-to-api-basic-auth
+          VERSION: ${{ inputs.version }}

@@ -91,6 +91,16 @@ vendor/bin/phpunit
 
 The version history for the WordPress.org package is in [readme.txt](readme.txt).
 
+## Releasing
+
+A change that should ship includes a file in [`.changeset`](.changeset). `npx changeset` writes it. `patch` is a fix, `minor` is a feature, and `major` is a breaking change. The sentence in the file is the changelog line. `Upgrade notice:` on its own line replaces the notice WordPress shows. Otherwise the previous notice is copied forward.
+
+Pushing that file to `master` opens a release pull request. Merging it tags the version, without a `v` prefix, and publishes the same zip to [WordPress.org](https://wordpress.org/plugins/cf7-to-api-basic-auth/) and GitHub. The attached zip is the installable package. It unpacks as `cf7-to-api-basic-auth`.
+
+A docs-only change that should not release uses `npx changeset --empty`. Node 22 or newer runs the Changesets CLI. The markdown file can also be committed by hand.
+
+WordPress.org publish uses the `SVN_USERNAME` and `SVN_PASSWORD` Actions secrets. The SVN password comes from the WordPress.org profile. In the repository settings, GitHub Actions must be allowed to open pull requests.
+
 ## License
 
 [GPL-2.0-or-later](https://www.gnu.org/licenses/gpl-2.0.html)
